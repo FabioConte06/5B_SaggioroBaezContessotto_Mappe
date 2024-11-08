@@ -2,7 +2,9 @@
 <html>
   <head> 
     <meta charset="utf-8">
-    <title>Leaflet maps example</title>
+    <title>Mappa</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css" />
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
      crossorigin=""/>
@@ -11,6 +13,11 @@
      </style>    
   </head>
   <body>
+    <form action="/action_page.php">
+        <label for="Luogo">Indirizzo: </label>
+        <input type="text" id="indirizzo" name="indirizzo">
+        <input type="submit" value="Submit">
+      </form>
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
