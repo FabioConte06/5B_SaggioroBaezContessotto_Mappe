@@ -1,3 +1,29 @@
+const createForm = (parentElement) => {
+    let data;
+    callback = null;
+
+    return {
+        setlabels: (labels) => {data = labels},
+        submit: (callbackinput) => {callback = callbackinput},
+        render: () => {
+            parentElement.innerHTML = data.map((index) => {
+                return `<div class="form-group">
+                        ${index[0]}\n <input type="${index[1]}" id="${index[0]}" class="form-control"/>
+                        </div>`;
+            }).join("\n") + `<button type="button" class="btn btn-primary" id="submit">SUBMIT</button>`;
+            document.getElementById("submit").onclick = () => {
+                const result = {};
+                console.log(data)
+                data.forEach((index) => {
+                    const campo = index[0];  
+                    result[campo] = document.getElementById(campo).value;
+                });
+                Booking(result);        
+            }
+            },
+        };
+    };
+
 let places = [
     {
         name: "Piazza del Duomo",
