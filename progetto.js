@@ -3,7 +3,7 @@ const token = "3819207b-2545-44f5-9bce-560b484b2f0f"
 
 const GETMAPPA = (indirizzo) => {
     return new Promise((resolve, reject) => {
-        fetch("https://us1.locationiq.com/v1/search?key=pk.869b0a986abed22e19f8fca6de24a2cb=" + indirizzo + "&format=json&"
+        fetch("https://us1.locationiq.com/v1/search?key=pk.869b0a986abed22e19f8fca6de24a2cb&q=" + indirizzo + "&format=json&"
             
         )
         .then(r => r.json())
@@ -14,7 +14,7 @@ const GETMAPPA = (indirizzo) => {
     });
 };
 
-const GETDATI = (chiave, token) => {
+const GETDATI = (chiave,token) => {
     return new Promise((resolve, reject) => {
       fetch('https://ws.cipiaceinfo.it/cache/get', {
         method: "POST",
@@ -28,12 +28,46 @@ const GETDATI = (chiave, token) => {
       })
         .then(r => r.json())
         .then(r => {
-          const data = JSON.parse(r.result);
-          resolve(data);
+            const data = JSON.parse(r.result);
+            resolve(data);
         })
         .catch(error => reject(error));
     });
   }
+
+  const SETDATI = (titolo, long, lat ) => {
+    return new Promise((resolve, reject) => {
+        GETDATI(chiave, token) 
+        .then(vecchiDati => {
+          const nuoviDati = [
+            ...vecchiDati,{
+            "name": titolo,
+            "coords":[lat,long]
+            }
+          ];
+
+          fetch("https://ws.cipiaceinfo.it/cache/set", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+              "key": token
+            },
+            body: JSON.stringify({
+              key: chiave,
+              value: JSON.stringify(nuoviDati)
+            })
+          })
+            .then(r => r.json())
+            .then(result => {
+              resolve(result);
+            })
+            .catch(error => reject(error));
+        })
+        .catch(error => reject(error));
+    
+    });
+}
+
 
 const createForm = (parentElement) => {
     let data;
@@ -48,11 +82,19 @@ const createForm = (parentElement) => {
                 return `<div>${name}\n<input id="${name}" type="text" /></div>`;
             }).join('\n')
             + "<button type='button' id='submit'>Submit</button>";  
-            document.querySelector("#submit").onclick = () => {
-            const result = data.map((name) => {
-                return document.querySelector("#" + name).value;
-            });
-            callback(result);
+            let bottonevia = document.getElementById("submit");
+            let via = document.getElementById("Luogo")
+            bottonevia.onclick = () => {
+                let indirizzo= via.value;
+                indirizzo=indirizzo.replace(" ","%20")
+                console.log(indirizzo)
+                bottonevia.value="";
+                GETMAPPA(indirizzo).then((dati)=>{
+                    let via_ricevuta=dati[0];
+                    let longitudine=via_ricevuta["lon"];
+                    let latitudine=via_ricevuta["lat"];
+                    SETDATI(indirizzo+" ", longitudine, latitudine).then(render);
+                });
             }         
         },
     };
@@ -91,8 +133,13 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
-places.forEach((place) => {
-    const marker = L.marker(place.coords).addTo(map);
-    marker.bindPopup(`<b>${place.name}</b>`);
-});
-
+function render(){
+    GETDATI(chiave,token).then((posti)=>{
+        console.log(posti);
+        posti.forEach((posto) => {
+            const marker = L.marker(posto.coords).addTo(map);
+            marker.bindPopup(`<b>${posto.name}</b>`);
+        });
+    });
+}
+render();
