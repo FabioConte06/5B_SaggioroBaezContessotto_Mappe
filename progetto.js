@@ -1,5 +1,18 @@
-const token_mappa="pk.869b0a986abed22e19f8fca6de24a2cb"
+const chiave ="mappa"
 const token = "3819207b-2545-44f5-9bce-560b484b2f0f"
+
+const GETMAPPA = (indirizzo) => {
+    return new Promise((resolve, reject) => {
+        fetch("https://us1.locationiq.com/v1/search?key=pk.869b0a986abed22e19f8fca6de24a2cb=" + indirizzo + "&format=json&"
+            
+        )
+        .then(r => r.json())
+        .then(r => {
+            resolve(r);
+        })
+        .catch(error => reject(error));
+    });
+};
 
 const createForm = (parentElement) => {
     let data;
