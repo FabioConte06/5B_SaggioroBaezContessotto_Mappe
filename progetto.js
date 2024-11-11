@@ -21,10 +21,10 @@ const createForm = (parentElement) => {
     };
 };
   
-  const form = createForm(document.querySelector('#app'));
-  form.setLabels(["Nome", "Cognome", "Età"]);
-  form.onsubmit(console.log);
-  form.render();
+const form = createForm(document.querySelector('#app'));
+form.setLabels(["Luogo"]);
+form.onsubmit(console.log);
+form.render();
 
 let places = [
     {
