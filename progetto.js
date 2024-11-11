@@ -14,6 +14,27 @@ const GETMAPPA = (indirizzo) => {
     });
 };
 
+const GETDATI = (chiave, token) => {
+    return new Promise((resolve, reject) => {
+      fetch('https://ws.cipiaceinfo.it/cache/get', {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "key": token
+        },
+        body: JSON.stringify({
+          key: chiave
+        })
+      })
+        .then(r => r.json())
+        .then(r => {
+          const data = JSON.parse(r.result);
+          resolve(data);
+        })
+        .catch(error => reject(error));
+    });
+  }
+
 const createForm = (parentElement) => {
     let data;
     let callback = null;
